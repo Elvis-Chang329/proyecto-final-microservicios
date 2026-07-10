@@ -1,0 +1,21 @@
+<section class="login-page">
+	<div class="login-card">
+		<p class="eyebrow">Gestion de Procesos</p>
+		<h1>Bienvenido</h1>
+		<p class="subtitle">Inicia sesion para administrar el inventario.</p>
+
+		<div class="field-group">
+			<label for="email">Correo</label>
+			<input id="email" [(ngModel)]="email" placeholder="admin@demo.com" autocomplete="username">
+		</div>
+
+		<div class="field-group">
+			<label for="password">Contrasena</label>
+			<input id="password" [(ngModel)]="password" type="password" placeholder="******" autocomplete="current-password">
+		</div>
+
+		<button class="btn-primary" (click)="login()" [disabled]="!email.trim() || !password.trim()">Entrar al sistema</button>
+
+		<p class="error-msg" *ngIf="msg">{{ msg }}</p>
+	</div>
+</section>

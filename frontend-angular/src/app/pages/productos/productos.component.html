@@ -1,0 +1,55 @@
+<section class="inventory-page">
+	<div class="inventory-shell">
+		<div class="toast" *ngIf="toastMsg">{{ toastMsg }}</div>
+
+		<header class="inventory-header">
+			<div>
+				<p class="eyebrow">MÓDULO</p>
+				<h1>Inventario</h1>
+			</div>
+			<button class="btn-secondary" (click)="logout()">Salir</button>
+		</header>
+
+		<div class="creator-card">
+			<div class="form-grid">
+				<input [(ngModel)]="nombre" placeholder="Nombre del producto">
+				<input [(ngModel)]="stock" type="number" placeholder="Stock">
+			</div>
+			<div class="actions">
+				<button class="btn-primary" (click)="crear()" [disabled]="!nombre.trim()">Crear producto</button>
+				<button class="btn-light" (click)="cargar()">Recargar</button>
+			</div>
+		</div>
+
+		<div class="list-card">
+			<h2>Listado</h2>
+			<div class="table-wrap" *ngIf="productos.length; else emptyState">
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Producto</th>
+							<th>Stock</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let p of productos">
+							<td class="id">#{{ p.id }}</td>
+							<td class="name">{{ p.nombre }}</td>
+							<td class="stock">{{ p.stock }}</td>
+							<td>
+								<button class="btn-row" (click)="verProducto(p)">Ver</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<ng-template #emptyState>
+				<p class="empty">No hay productos</p>
+			</ng-template>
+		</div>
+
+		<p class="error-msg" *ngIf="msg">{{ msg }}</p>
+	</div>
+</section>
