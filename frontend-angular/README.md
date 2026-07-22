@@ -12,6 +12,10 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Production deployment
+
+The production build is intended to be served through Nginx on port 80. The frontend uses `/api/usuarios` and `/api/inventario` in production, and Nginx proxies those requests to the backend services.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
