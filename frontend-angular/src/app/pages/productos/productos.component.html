@@ -4,50 +4,92 @@
 
 		<header class="inventory-header">
 			<div>
-				<p class="eyebrow">MÓDULO</p>
-				<h1>Inventario</h1>
+				<p class="eyebrow">MÓDULO DE INVENTARIO</p>
+				<h1>Panel de control</h1>
+				<p class="subheading">Gestión centralizada de productos, stock y movimientos en tiempo real.</p>
 			</div>
 			<button class="btn-secondary" (click)="logout()">Salir</button>
 		</header>
 
-		<div class="creator-card">
-			<div class="form-grid">
-				<input [(ngModel)]="nombre" placeholder="Nombre del producto">
-				<input [(ngModel)]="stock" type="number" placeholder="Stock">
-			</div>
-			<div class="actions">
-				<button class="btn-primary" (click)="crear()" [disabled]="!nombre.trim()">Crear producto</button>
-				<button class="btn-light" (click)="cargar()">Recargar</button>
-			</div>
-		</div>
+		<div class="dashboard-grid">
+			<aside class="side-panel">
+				<div class="panel-card accent">
+					<span class="panel-label">Resumen operativo</span>
+					<strong>{{ totalProductos }}</strong>
+					<p>Productos activos en inventario</p>
+				</div>
 
-		<div class="list-card">
-			<h2>Listado</h2>
-			<div class="table-wrap" *ngIf="productos.length; else emptyState">
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Producto</th>
-							<th>Stock</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr *ngFor="let p of productos">
-							<td class="id">#{{ p.id }}</td>
-							<td class="name">{{ p.nombre }}</td>
-							<td class="stock">{{ p.stock }}</td>
-							<td>
-								<button class="btn-row" (click)="verProducto(p)">Ver</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="panel-card">
+					<span class="panel-label">Stock total</span>
+					<strong>{{ stockTotal }}</strong>
+					<p>Unidades registradas disponibles</p>
+				</div>
+
+				<div class="panel-card warning">
+					<span class="panel-label">Bajo stock</span>
+					<strong>{{ productosBajoStock }}</strong>
+					<p>Productos que requieren revisión</p>
+				</div>
+			</aside>
+
+			<div class="content-panel">
+				<div class="creator-card">
+					<div class="section-head">
+						<div>
+							<p class="card-kicker">Nuevo registro</p>
+							<h2>Crear producto</h2>
+						</div>
+						<span class="hint">Registra productos con su stock inicial.</span>
+					</div>
+					<div class="form-grid">
+						<input [(ngModel)]="nombre" placeholder="Nombre del producto" aria-label="Nombre del producto">
+						<input [(ngModel)]="stock" type="number" placeholder="Stock" aria-label="Stock del producto">
+					</div>
+					<div class="actions">
+						<button class="btn-primary" (click)="crear()" [disabled]="!nombre.trim()">Crear producto</button>
+						<button class="btn-light" (click)="cargar()">Recargar</button>
+					</div>
+				</div>
+
+				<div class="list-card">
+					<div class="section-head">
+						<div>
+							<p class="card-kicker">Listado maestro</p>
+							<h2>Productos registrados</h2>
+						</div>
+						<span class="hint">Vista detallada con estado y acciones rápidas.</span>
+					</div>
+					<div class="table-wrap" *ngIf="productos.length; else emptyState">
+						<table>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Producto</th>
+									<th>Stock</th>
+									<th>Estado</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let p of productos">
+									<td class="id">#{{ p.id }}</td>
+									<td class="name">{{ p.nombre }}</td>
+									<td class="stock">{{ p.stock }}</td>
+									<td>
+										<span class="state-badge" [ngClass]="stockEstado(p.stock).toLowerCase()">{{ stockEstado(p.stock) }}</span>
+									</td>
+									<td>
+										<button class="btn-row" (click)="verProducto(p)">Ver</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<ng-template #emptyState>
+						<p class="empty">No hay productos</p>
+					</ng-template>
+				</div>
 			</div>
-			<ng-template #emptyState>
-				<p class="empty">No hay productos</p>
-			</ng-template>
 		</div>
 
 		<p class="error-msg" *ngIf="msg">{{ msg }}</p>

@@ -59,6 +59,30 @@ export class ProductosComponent implements OnInit {
     this.showToast(`Producto: ${producto.nombre}`);
   }
 
+  get totalProductos(): number {
+    return this.productos.length;
+  }
+
+  get stockTotal(): number {
+    return this.productos.reduce((total, producto) => total + Number(producto.stock || 0), 0);
+  }
+
+  get productosBajoStock(): number {
+    return this.productos.filter((producto) => Number(producto.stock || 0) <= 5).length;
+  }
+
+  stockEstado(stock: number): 'Bajo' | 'Normal' | 'Alto' {
+    if (stock <= 5) {
+      return 'Bajo';
+    }
+
+    if (stock <= 15) {
+      return 'Normal';
+    }
+
+    return 'Alto';
+  }
+
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);

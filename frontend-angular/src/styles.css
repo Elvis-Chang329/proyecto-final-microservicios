@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
 
 :root {
-	--bg-grad-a: #f8fafc;
-	--bg-grad-b: #ecfeff;
-	--bg-grad-c: #fff7ed;
+	--bg-grad-a: #effaf2;
+	--bg-grad-b: #dcfce7;
+	--bg-grad-c: #bbf7d0;
 }
 
 * {
@@ -18,8 +18,8 @@ body {
 
 body {
 	font-family: 'Manrope', 'Segoe UI', sans-serif;
-	background: radial-gradient(circle at 5% 10%, var(--bg-grad-c), transparent 40%),
-		radial-gradient(circle at 95% 90%, var(--bg-grad-b), transparent 45%),
+	background: radial-gradient(circle at 5% 10%, var(--bg-grad-c), transparent 38%),
+		radial-gradient(circle at 95% 90%, var(--bg-grad-b), transparent 42%),
 		var(--bg-grad-a);
 	color: #0f172a;
 }
