@@ -41,8 +41,12 @@
 			</div>
 
 			<button class="btn-primary" (click)="login()" [disabled]="!email.trim() || !password.trim()">Entrar al sistema</button>
+			<button class="btn-secondary" type="button" (click)="goToRegister()">No tienes usuario, crea uno</button>
 
-			<p class="error-msg" *ngIf="msg">{{ msg }}</p>
+			<div class="alert alert-error" *ngIf="msg">
+				<span class="alert-title">Acceso denegado</span>
+				<p>{{ msg }}</p>
+			</div>
 		</div>
 	</div>
 </section>

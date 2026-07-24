@@ -1,0 +1,66 @@
+<section class="register-page">
+	<div class="register-shell">
+		<aside class="register-panel">
+			<p class="eyebrow">Alta de usuario</p>
+			<h1>Crea acceso para tu equipo con una interfaz clara y moderna.</h1>
+			<p class="subtitle">Registra un nuevo usuario en pocos pasos y vuelve al login con una cuenta lista para trabajar.</p>
+
+			<div class="stats-grid">
+				<div>
+					<span>01</span>
+					<p>Controla quién entra al sistema</p>
+				</div>
+				<div>
+					<span>02</span>
+					<p>Define un rol seguro por defecto</p>
+				</div>
+				<div>
+					<span>03</span>
+					<p>Vuelve al login en un clic</p>
+				</div>
+			</div>
+		</aside>
+
+		<div class="register-card">
+			<div class="card-topline">
+				<span class="dot"></span>
+				<span>Nuevo usuario</span>
+			</div>
+
+			<h2>Crear cuenta</h2>
+			<p class="subtitle compact">Completa los datos básicos para dar de alta una cuenta nueva.</p>
+
+			<div class="field-group">
+				<label for="email">Correo</label>
+				<input id="email" [(ngModel)]="email" type="email" placeholder="nuevo@empresa.com" autocomplete="username">
+			</div>
+
+			<div class="field-group">
+				<label for="password">Contraseña</label>
+				<input id="password" [(ngModel)]="password" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+			</div>
+
+			<div class="field-group">
+				<label for="confirmPassword">Confirmar contraseña</label>
+				<input id="confirmPassword" [(ngModel)]="confirmPassword" type="password" placeholder="Repite la contraseña" autocomplete="new-password">
+			</div>
+
+			<div class="field-group">
+				<label for="role">Rol</label>
+				<select id="role" [(ngModel)]="role">
+					<option value="lector">Lector</option>
+					<option value="operador">Operador</option>
+					<option value="admin">Admin</option>
+				</select>
+			</div>
+
+			<button class="btn-primary" (click)="register()">Crear usuario</button>
+			<button class="btn-secondary" type="button" (click)="goToLogin()">Volver al login</button>
+
+			<div class="alert" [ngClass]="messageType === 'success' ? 'alert-success' : 'alert-error'" *ngIf="message">
+				<span class="alert-title">{{ messageType === 'success' ? 'Usuario listo' : 'Validación requerida' }}</span>
+				<p>{{ message }}</p>
+			</div>
+		</div>
+	</div>
+</section>

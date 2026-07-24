@@ -3,10 +3,10 @@
 		<div class="toast" *ngIf="toastMsg">{{ toastMsg }}</div>
 
 		<header class="inventory-header">
-			<div>
+			<div class="brand-block">
 				<p class="eyebrow">MÓDULO DE INVENTARIO</p>
-				<h1>Panel de control</h1>
-				<p class="subheading">Gestión centralizada de productos, stock y movimientos en tiempo real.</p>
+				<h1>Panel de inventario</h1>
+				<p class="subheading">Gestiona productos, ajusta stock y aplica cambios sobre la base de datos desde una sola vista.</p>
 			</div>
 			<button class="btn-secondary" (click)="logout()">Salir</button>
 		</header>
@@ -36,17 +36,35 @@
 				<div class="creator-card">
 					<div class="section-head">
 						<div>
-							<p class="card-kicker">Nuevo registro</p>
-							<h2>Crear producto</h2>
+							<p class="card-kicker">{{ isEditing ? 'Edición de registro' : 'Nuevo registro' }}</p>
+							<h2>{{ formTitle }}</h2>
 						</div>
-						<span class="hint">Registra productos con su stock inicial.</span>
+						<span class="hint">{{ formHint }}</span>
 					</div>
 					<div class="form-grid">
 						<input [(ngModel)]="nombre" placeholder="Nombre del producto" aria-label="Nombre del producto">
 						<input [(ngModel)]="stock" type="number" placeholder="Stock" aria-label="Stock del producto">
 					</div>
+					<div class="stock-visual" *ngIf="isEditing">
+						<div class="restock-box">
+							<label class="restock-check">
+								<input type="checkbox" [checked]="needsRestock" disabled>
+								<span>Requiere reposición</span>
+							</label>
+							<p>Se activa automáticamente cuando quedan 5 unidades o menos.</p>
+						</div>
+						<div class="stock-visual-top">
+							<span class="stock-pill">Quedan {{ stock }} unidades</span>
+							<span class="stock-status" [ngClass]="stockEditState.toLowerCase().replace(' ', '-')">{{ stockEditState }}</span>
+						</div>
+						<div class="stock-bar" aria-hidden="true">
+							<span class="stock-bar-fill" [style.width.%]="stockEditProgress"></span>
+						</div>
+						<p class="stock-note">{{ stockEditMessage }}</p>
+					</div>
 					<div class="actions">
-						<button class="btn-primary" (click)="crear()" [disabled]="!nombre.trim()">Crear producto</button>
+						<button class="btn-primary" (click)="crear()" [disabled]="!nombre.trim()">{{ submitLabel }}</button>
+						<button class="btn-light" *ngIf="isEditing" (click)="cancelarEdicion()">Cancelar</button>
 						<button class="btn-light" (click)="cargar()">Recargar</button>
 					</div>
 				</div>
@@ -78,8 +96,9 @@
 									<td>
 										<span class="state-badge" [ngClass]="stockEstado(p.stock).toLowerCase()">{{ stockEstado(p.stock) }}</span>
 									</td>
-									<td>
-										<button class="btn-row" (click)="verProducto(p)">Ver</button>
+									<td class="row-actions">
+										<button class="btn-row primary" (click)="iniciarEdicion(p)">Editar</button>
+										<button class="btn-row danger" (click)="eliminar(p)">Eliminar</button>
 									</td>
 								</tr>
 							</tbody>
@@ -92,6 +111,9 @@
 			</div>
 		</div>
 
-		<p class="error-msg" *ngIf="msg">{{ msg }}</p>
+		<div class="alert alert-error" *ngIf="msg">
+			<span class="alert-title">Operación pendiente</span>
+			<p>{{ msg }}</p>
+		</div>
 	</div>
 </section>

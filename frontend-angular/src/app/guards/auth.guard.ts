@@ -54,6 +54,21 @@ const hasAccess = () => {
   return true;
 };
 
+const isGuest = () => {
+  const router = inject(Router);
+  const token = localStorage.getItem('token');
+
+  if (isValidToken(token)) {
+    router.navigate(['/productos']);
+    return false;
+  }
+
+  localStorage.removeItem('token');
+  return true;
+};
+
 export const authGuard: CanActivateFn = () => hasAccess();
 
 export const authMatchGuard: CanMatchFn = () => hasAccess();
+
+export const guestGuard: CanActivateFn = () => isGuest();

@@ -15,6 +15,7 @@ export class ProductosComponent implements OnInit {
   productos: any[] = [];
   nombre = '';
   stock = 0;
+  editingId: number | null = null;
   msg = '';
   toastMsg = '';
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -34,15 +35,77 @@ export class ProductosComponent implements OnInit {
 
   crear() {
     this.msg = '';
-    this.api.crearProducto({ nombre: this.nombre, stock: Number(this.stock) }).subscribe({
+    const wasEditing = this.editingId !== null;
+
+    const payload = { nombre: this.nombre.trim(), stock: Number(this.stock) };
+    const request$ = this.editingId
+      ? this.api.actualizarProducto(this.editingId, payload)
+      : this.api.crearProducto(payload);
+
+    request$.subscribe({
       next: () => {
-        this.nombre = '';
-        this.stock = 0;
+        this.limpiarFormulario();
         this.cargar();
-        this.showToast('Producto creado');
+        this.showToast(wasEditing ? 'Producto actualizado' : 'Producto creado');
       },
-      error: (err) => (this.msg = err?.error?.error || 'create_error')
+      error: (err) => {
+        const code = err?.error?.error;
+
+        if (code === 'producto_not_found') {
+          this.msg = 'El producto ya no existe.';
+          return;
+        }
+
+        this.msg = this.editingId ? 'No se pudo actualizar el producto.' : 'No se pudo crear el producto.';
+      }
     });
+  }
+
+  iniciarEdicion(producto: { id: number; nombre: string; stock: number }) {
+    this.editingId = producto.id;
+    this.nombre = producto.nombre;
+    this.stock = Number(producto.stock || 0);
+    this.msg = '';
+    this.showToast(`Editando ${producto.nombre}`);
+  }
+
+  cancelarEdicion() {
+    this.limpiarFormulario();
+    this.msg = '';
+  }
+
+  eliminar(producto: { id: number; nombre: string }) {
+    const confirmacion = confirm(`¿Eliminar ${producto.nombre}?`);
+    if (!confirmacion) {
+      return;
+    }
+
+    this.msg = '';
+    this.api.eliminarProducto(producto.id).subscribe({
+      next: () => {
+        this.cargar();
+        if (this.editingId === producto.id) {
+          this.limpiarFormulario();
+        }
+        this.showToast('Producto eliminado');
+      },
+      error: (err) => {
+        const code = err?.error?.error;
+
+        if (code === 'producto_not_found') {
+          this.msg = 'El producto ya no existe.';
+          return;
+        }
+
+        this.msg = 'No se pudo eliminar el producto.';
+      }
+    });
+  }
+
+  limpiarFormulario() {
+    this.nombre = '';
+    this.stock = 0;
+    this.editingId = null;
   }
 
   showToast(message: string) {
@@ -57,6 +120,68 @@ export class ProductosComponent implements OnInit {
 
   verProducto(producto: { nombre: string }) {
     this.showToast(`Producto: ${producto.nombre}`);
+  }
+
+  get formTitle(): string {
+    return this.editingId ? 'Editar producto' : 'Crear producto';
+  }
+
+  get formHint(): string {
+    return this.editingId ? 'Modifica nombre y stock, luego guarda los cambios.' : 'Registra un producto nuevo con su stock inicial.';
+  }
+
+  get stockEditState(): 'Sin stock' | 'Bajo' | 'Normal' | 'Alto' {
+    const currentStock = Number(this.stock || 0);
+
+    if (currentStock <= 0) {
+      return 'Sin stock';
+    }
+
+    if (currentStock <= 5) {
+      return 'Bajo';
+    }
+
+    if (currentStock <= 15) {
+      return 'Normal';
+    }
+
+    return 'Alto';
+  }
+
+  get stockEditMessage(): string {
+    const currentStock = Number(this.stock || 0);
+
+    if (currentStock <= 0) {
+      return 'Este producto está agotado.';
+    }
+
+    if (currentStock <= 5) {
+      return 'Quedan pocas unidades y conviene reponer.';
+    }
+
+    if (currentStock <= 15) {
+      return 'Nivel de stock saludable.';
+    }
+
+    return 'Stock alto y disponible.';
+  }
+
+  get needsRestock(): boolean {
+    const currentStock = Number(this.stock || 0);
+    return currentStock <= 5;
+  }
+
+  get stockEditProgress(): number {
+    const currentStock = Number(this.stock || 0);
+    return Math.max(0, Math.min(100, currentStock > 0 ? (currentStock / 20) * 100 : 0));
+  }
+
+  get submitLabel(): string {
+    return this.editingId ? 'Guardar cambios' : 'Crear producto';
+  }
+
+  get isEditing(): boolean {
+    return this.editingId !== null;
   }
 
   get totalProductos(): number {

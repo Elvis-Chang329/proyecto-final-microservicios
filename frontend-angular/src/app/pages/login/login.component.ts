@@ -21,7 +21,7 @@ export class LoginComponent {
   login() {
     this.msg = '';
     if (!this.email.trim() || !this.password.trim()) {
-      this.msg = 'Debes ingresar correo y contrasena';
+      this.msg = 'Debes ingresar correo y contraseña';
       return;
     }
 
@@ -30,7 +30,20 @@ export class LoginComponent {
         localStorage.setItem('token', res.token);
         this.router.navigate(['/productos']);
       },
-      error: (err) => (this.msg = err?.error?.error || 'login_error')
+      error: (err) => {
+        const code = err?.error?.error;
+
+        if (err?.status === 401 || code === 'invalid_credentials') {
+          this.msg = 'Contraseña incorrecta o credenciales inválidas';
+          return;
+        }
+
+        this.msg = 'No se pudo iniciar sesión. Intenta nuevamente.';
+      }
     });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/registro']);
   }
 }
